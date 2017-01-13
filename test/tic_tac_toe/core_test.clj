@@ -113,9 +113,29 @@
 
 (deftest find-win-test
   (testing "Horizontal win is detected."
-    (is (= {:winner :o :winning-cells [(->CellId \B 1)
+    (is (= {:winner        :o
+            :winning-cells [(->CellId \B 1)
+                            (->CellId \B 2)
+                            (->CellId \B 3)]}
+           (find-win [[nil nil :x]
+                      [:o :o :o]
+                      [:x :x nil]]))))
+  (testing "Vertical win is detected."
+    (is (= {:winner :o :winning-cells [(->CellId \C 3)
+                                       (->CellId \B 3)
+                                       (->CellId \A 3)]}
+           (find-win [[nil nil :o]
+                      [nil :x  :o]
+                      [ :x :x  :o]]))))
+  (testing "Diagonal win is detected."
+    (is (= {:winner :o :winning-cells [(->CellId \C 1)
                                        (->CellId \B 2)
-                                       (->CellId \B 3)]}
-           (find-win [[nil nil  :x]
-                      [ :o  :o  :o]
-                      [ :x  :x nil]])))))
+                                       (->CellId \A 3)]}
+           (find-win [[:x nil :o]
+                      [:x :o  nil]
+                      [:o :x  nil]]))))
+  (testing "Returns nil if no win detected."
+    (is (= nil
+           (find-win [[nil nil :x]
+                      [:o  :o  nil]
+                      [:x  :x  nil]])))))

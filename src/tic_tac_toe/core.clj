@@ -84,6 +84,19 @@
      :winning-cells (map :cell vector)}))
 
 (defn find-win [board]
-  (first-match some?
-    (map test-win
-      (all-vectors (assoc-cell-ids board)))))
+  (->> (assoc-cell-ids board)
+       (all-vectors)
+       (map test-win)
+       (first-match some?)))
+
+(defrecord won [player cell-ids])
+(defrecord drawn [])
+(defrecord ready [next-player])
+
+(defn status [#^Game game]
+  (let [board (board game)
+        win (find-win board)]
+    (cond
+      win (->won (:player win) (:winning-cells win))
+      (some #(some some? %) board) (->ready (player-by-play-index (:raw-play-history game)))
+      :else (->drawn))))
